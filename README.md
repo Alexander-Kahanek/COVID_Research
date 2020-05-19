@@ -1,6 +1,6 @@
 # COVID Reasearch Project
 
-This project is currently being worked on, so this repository will currently be messy.
+This project is currently being worked on.
 
 # Files
 
