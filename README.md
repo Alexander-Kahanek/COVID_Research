@@ -4,7 +4,7 @@ This project is currently being worked on.
 
 # Files
 
-All the data is stored on a virtual machine, so they will not be posted to github.
+All the data is stored on a virtual machine, so it will not be posted to github.
 
 * filter_scripts.py is a script I made to filter through compressed json files, and create a cleaner json file.
 
