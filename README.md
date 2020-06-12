@@ -7,7 +7,7 @@ This project is currently being worked on.
 All the data is stored on a virtual machine, so it will not be posted to github.
 
 * filter_scripts.py is a script I made to filter through compressed json files, and create a cleaner json file.
-  + Loads in compressed json file -> decompresses file
+  + loads in compressed json file -> decompresses file
   + loads in individual tweet and checks if it has the conditions needed to keep the tweet for further analysis
   + appends whole tweet to json file
     - structured as: {tweet}\n{tweet}\n{tweet} ... ect.
