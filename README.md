@@ -6,20 +6,41 @@ This project is currently being worked on.
 
 All the data is stored on a virtual machine, so it will not be posted to github.
 
-* filter_scripts.py is a script I made to filter through compressed json files, and create a cleaner json file.
+## 1_process_data
+
+Scripts are to be ran in the below order, hyperparameters can be changed in the top of the .py file, or the script can be imported as a function.
+
+* filter_script.py is a script I made to filter through compressed json files, and create a cleaner json file.
   + loads in compressed json file -> decompresses file
   + loads in individual tweet and checks if it has the conditions needed to keep the tweet for further analysis
   + appends whole tweet to json file
     - structured as: {tweet}\n{tweet}\n{tweet} ... ect.
 
 * json_2_csv_script.py is a script I made to take the json file from the above script, and clean the data down into a csv file. This is used to make a quick analysis on the distribution of tweets gathered.
-  + loads in a single tweet from the above created json file.
+  + loads in a single tweet from the json file created from filter_script.py 
   + loads specific data from tweet into a dataframe format.
+	- 'created_at', 'user_id_str', 'text', 'coordinates', 'place_coordinates', 'place_country', 'place_country_code', 'place_full_name', 'place_type', 'language'
   + appends tweet into a created csv file.
 
-* flair_script.py is a script built to run the tweets through flairs' models and output the data into a json file
-  + need to seperate this script into one script per flair model
-  + need to build a script to take finished json files from above, and combine into one big json file
+## 2_flair_scripts
+
+Scripts are to be ran in the below order, hyperparameters can be changed in the top of the .py file, or the script can be imported as a function.
+
+* flair_ner.py - script using flair to get Named Entity Recognition from tweet texts
+* flair_pos.py - script using flair to get Part of Speech from tweet texts
+* flair_sent.py - script using flair to get Sentiment of tweet texts
+
+They all follow this algorithm:
+
+* load in data created from json_2_csv_script.py
+* load in given model from flair
+* iterate through df from csv file
+* save 'created_at', 'place', 'text', '[FLAIR MODEL]' into json object
+* append json object to file
+
+NEED script to combine all 3 json created from above, into singular dictionaries.
+
+## analysis
 
 + generate_graphs.py is a script made to get a quick analysis from the above json file created from the above.
   + loads in tweets from json file and saves to list of dictionaries.
