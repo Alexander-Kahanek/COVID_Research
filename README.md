@@ -62,4 +62,4 @@ NEED script to combine all 3 json created from above, into singular dictionaries
     - wordclouds are saved in a new folder as png
   + pushes word count dictionaries to text documents
   
-MORE TO COME!
+# MORE TO COME!
