@@ -50,6 +50,10 @@ NEED script to combine all 3 json created from above, into singular dictionaries
 	+ NOT AN OFFICIAL WRITTEN ANALYSIS
 	+ this is an internal analysis to test the distribution of tweets from filtering with place information available
 
+* flair_analysis.ipynb
+	+ NOT AN OFFICIAL WRITTEN ANALYSIS
+	+ this is an internal analysis to test a sample of the data being ran through flair, then generating wordclouds for a quick analysis.
+
 + generate_graphs.py is a script made to get a quick analysis from the above json file created from the above.
   + loads in tweets from json file and saves to list of dictionaries.
   + functions will transfer data from lists to: 
