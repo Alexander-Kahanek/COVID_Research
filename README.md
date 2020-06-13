@@ -4,7 +4,7 @@ This project is currently being worked on.
 
 # Files
 
-All the data is stored on a virtual machine, so it will not be posted to github.
+All the data is stored on a virtual machine due to size, so it will not be posted to github.
 
 ## 1_process_data
 
