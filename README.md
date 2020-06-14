@@ -4,7 +4,7 @@ This project is currently being worked on.
 
 # Files
 
-All the data is stored on a virtual machine, so it will not be posted to github.
+All the data is stored on a virtual machine due to size, so it will not be posted to github.
 
 ## 1_process_data
 
@@ -62,4 +62,4 @@ NEED script to combine all 3 json created from above, into singular dictionaries
     - wordclouds are saved in a new folder as png
   + pushes word count dictionaries to text documents
   
-MORE TO COME!
+# MORE TO COME!
