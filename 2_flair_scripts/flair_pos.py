@@ -1,3 +1,4 @@
+import os
 import pandas as pd
 import json
 from flair.data import Sentence
@@ -5,16 +6,19 @@ from flair.models import SequenceTagger
 
 ##########################
 # HYPERPARAMETERS ########
-FIN = "filtered/tweets.csv"
-FOUT = "flair/pos_tweets.json"
+FIN = "2_flair_scripts/filtered/tweets.csv"
+FOUT = "2_flair_scripts/flair"
 ##########################
 
+count = 0  # global counting variable
+
 def flair_pos(FIN, FOUT):
-    # function used to take csv tweet data
-    # run through flair models
-    # output json file
-    # FIN @ location of csv file
-    # FOUT @ location for json file to be saved
+    """ 
+    function used to take csv tweet data run through flair models output json file 
+    :param FIN: filepath for csv
+    :param FOUT: filepath to store new json into
+    :returns: nothing
+    """
 
     print("Reading in data.")
 
@@ -34,8 +38,11 @@ def flair_pos(FIN, FOUT):
     # DEFINING FUNCTIONS
 
     def get_pos(sentence):
-        # funtion to return all pos in a list
-        # sentence @ pass in class Sentence from flair
+        '''
+        function to get part of speech with flair
+        :param sentence: pass in class Sentence from flair
+        :returns: pos in a list format [(word, tag), ...]
+        '''
 
         pos_tagger.predict(sentence)
         # tuple of (token, pos tag)
@@ -44,10 +51,13 @@ def flair_pos(FIN, FOUT):
         return pos
 
     def run_stack(date, place, text):
-        # function to run whole stack and return a tuple
-        # date @ pass in date to be put in json
-        # place @ pass in place to be put in json
-        # text @ text in date to be put in json and ran through flair
+        '''
+        function to run flair stack
+        :param date: pass in date to be put in json
+        :param place: pass in place to be put in json
+        :param text: text in date to be put in json and ran through flair
+        :returns: dictionarty object
+        '''
 
         # change to flair class, predict pos
         sentence = Sentence(text)
@@ -65,9 +75,11 @@ def flair_pos(FIN, FOUT):
         return {"created_at": date, "place": place, "text": text, "pos": pos}
 
     def dump_tweet(W_FILENAME, TWEET):
-        ## function to dump a single tweet
-        # W_FILENAME @ pass in write filename, and tweet to write
-        # TWEET @ function will append tweet to end of file
+        '''
+        function to dump a single tweet
+        :param W_FILENAME: pass in write filename, and tweet to write
+        :param TWEET: function will append tweet to end of file
+        '''
 
         with open(W_FILENAME, 'a') as fout:
             fout.write(json.dumps(TWEET))  # write tweet as string
@@ -79,9 +91,12 @@ def flair_pos(FIN, FOUT):
     ##########################
     # RUNNING SCRIPT
 
+    os.mkdir(FOUT)
+
+    print('Running Script.')
+
     for row in (df[['created_at', 'place_full_name', 'text']].iterrows()):
         tweet = run_stack(row[1]['created_at'], row[1]['place_full_name'], row[1]['text'])
-        dump_tweet(FOUT, tweet)
+        dump_tweet(FOUT + '/pos_tweets.json', tweet)
 
 flair_pos(FIN, FOUT)
-
