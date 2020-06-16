@@ -12,12 +12,15 @@ FOUT = "2_flair_scripts/flair"
 
 count = 0  # global counting variable
 
+
 def flair_sentiment(FIN, FOUT):
-    """ 
-    function used to take csv tweet data run through flair models output json file 
-    :param FIN: filepath for csv
-    :param FOUT: filepath to store new json into
-    :returns: nothing
+    """Function used to take csv tweet data run through flair models output json file 
+
+    Parameters
+    ----------
+    FIN: filepath for csv
+
+    FOUT: filepath to store new json into
     """
 
     print("Reading in data.")
@@ -38,10 +41,15 @@ def flair_sentiment(FIN, FOUT):
     # DEFINING FUNCTIONS
 
     def get_sentiment(sentence):
-        '''
-        function to return sentiment string
-        :param sentence: pass in class Sentence from flair
-        :returns: sentiment as string
+        '''Function to return sentiment string
+
+        Parameters
+        ----------
+        sentence : pass in class Sentence from flair
+
+        Returns
+        -------
+        sentiment as string
         '''
 
         classifier.predict(sentence)
@@ -49,12 +57,19 @@ def flair_sentiment(FIN, FOUT):
         return sentence.to_dict()['labels'][0]['value']
 
     def run_stack(date, place, text):
-        '''
-        function to run flair stack
-        :param date: pass in date to be put in json
-        :param place: pass in place to be put in json
-        :param text: text in date to be put in json and ran through flair
-        :returns: dictionarty object
+        '''Function to run flair stack
+
+        Parameters
+        ----------
+        date : pass in date to be put in json
+
+        place : pass in place to be put in json
+
+        text : pass in text to be put in json and ran through flair
+
+        Returns
+        -------
+        dictionarty object
         '''
 
         # change to flair class, predict sentiment
@@ -70,10 +85,13 @@ def flair_sentiment(FIN, FOUT):
         return {"created_at": date, "place": place, "text": text, "sent": sent}
 
     def dump_tweet(W_FILENAME, TWEET):
-        '''
-        function to dump a single tweet
-        :param W_FILENAME: pass in write filename, and tweet to write
-        :param TWEET: function will append tweet to end of file
+        '''Function to dump a single tweet
+
+        Parameters
+        ----------
+        W_FILENAME : pass in write filename, and tweet to write
+
+        TWEET : function will append tweet to end of file
         '''
 
         with open(W_FILENAME, 'a') as fout:
@@ -86,12 +104,21 @@ def flair_sentiment(FIN, FOUT):
     ##########################
     # RUNNING SCRIPT
 
-    os.mkdir(FOUT)
+    try:
+        os.mkdir(FOUT)
+    except:
+        pass
 
     print('Running Script.')
 
     for row in (df[['created_at', 'place_full_name', 'text']].iterrows()):
-        tweet = run_stack(row[1]['created_at'], row[1]['place_full_name'], row[1]['text'])
+        tweet = run_stack(row[1]['created_at'],
+                          row[1]['place_full_name'],
+                          row[1]['text']
+                          )
         dump_tweet(FOUT + '/sentiment_tweets.json', tweet)
+
+    print('Script has finished.')
+
 
 flair_sentiment(FIN, FOUT)

@@ -29,16 +29,23 @@ Scripts are to be ran in the below order, hyperparameters can be changed in the 
 * flair_ner.py - script using flair to get Named Entity Recognition from tweet texts
 * flair_pos.py - script using flair to get Part of Speech from tweet texts
 * flair_sent.py - script using flair to get Sentiment of tweet texts
+* They all follow this algorithm:
 
-They all follow this algorithm:
+	+ load in data created from json_2_csv_script.py
+	+ load in given model from flair
+	+ iterate through df from csv file
+	+ save 'created_at', 'place', 'text', '[FLAIR MODEL]' into json object
+	+ append json object to file
 
-* load in data created from json_2_csv_script.py
-* load in given model from flair
-* iterate through df from csv file
-* save 'created_at', 'place', 'text', '[FLAIR MODEL]' into json object
-* append json object to file
+Joining files from above scripts:
 
-NEED script to combine all 3 json created from above, into singular dictionaries.
+* join_flair.py - script used to join the following files outputted by flair_ner.py, flair_pos.py, flair_sent.py
+	+ load in data from pos_tweets.json, ner_tweets.json, sentiment_tweets.json
+	+ combines each tweet from 3 files into 1 dictionary object
+	+ appends new dictionary object to combined json file, flair_joined_tweets.json
+	+ converts dictionary object to csv file and outputs to flair_joined_tweets.csv
+
+
 
 ## analysis
 
@@ -49,10 +56,6 @@ NEED script to combine all 3 json created from above, into singular dictionaries
 * yes_place.ipynb
 	+ NOT AN OFFICIAL WRITTEN ANALYSIS
 	+ this is an internal analysis to test the distribution of tweets from filtering with place information available
-
-* flair_analysis.ipynb
-	+ NOT AN OFFICIAL WRITTEN ANALYSIS
-	+ this is an internal analysis to test a sample of the data being ran through flair, then generating wordclouds for a quick analysis.
 
 + generate_graphs.py is a script made to get a quick analysis from the above json file created from the above.
   + loads in tweets from json file and saves to list of dictionaries.
