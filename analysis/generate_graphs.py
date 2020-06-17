@@ -35,9 +35,6 @@ def get_nested_string(data):
 
     string = " ".join(word_list)
 
-    # for word in word_list:
-    #     string = string + " " + word
-
     return string
 
 
@@ -46,10 +43,6 @@ def get_string(data):
     word_list = [word for word in data if word is not None]
 
     string = " ".join(word_list)
-
-    # for word in word_list:
-    #     if word is not None:
-    #         string = string + " " + word
 
     return string
 
@@ -62,9 +55,6 @@ def get_pos_string(data, POS):
                  ]
 
     string = " ".join(word_list)
-
-    # for word in word_list:
-    #     string = string + " " + word
 
     return string
 
