@@ -40,7 +40,10 @@ def get_nested_string(data):
 
 def get_string(data):
     # function returns a string of non nested words
-    word_list = [word for word in data if word is not None]
+    word_list = [word.lower()
+                 for word in data
+                 if word is not None
+                 ]
 
     string = " ".join(word_list)
 
@@ -48,7 +51,7 @@ def get_string(data):
 
 
 def get_pos_string(data, POS):
-    word_list = [word
+    word_list = [word.lower()
                  for pos_list in data
                  for (word, tag) in pos_list
                  if POS in tag
