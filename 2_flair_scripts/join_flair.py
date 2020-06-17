@@ -39,7 +39,7 @@ def join_flair_2_json(POS_FIN, NER_FIN, SENT_FIN, FOUT):
         LINE = json.loads(LINE.rstrip())  # strip newline from end
         json.dumps(LINE)  # get in json format
 
-    return LINE
+        return LINE
 
     def join_lists(counter, pos_list, ner_list, sent_list):
         '''Function joins tweets from 3 lists into one single list
@@ -58,23 +58,36 @@ def join_flair_2_json(POS_FIN, NER_FIN, SENT_FIN, FOUT):
         -------
         dictionary object
         '''
-        curr_text = pos_list[counter]['text']
 
-        if curr_text == ner_list[counter]['text'] and curr_text == sent_list[counter]['text']:
+        #######################################
+        # clean text??????????????????????????????
+        pos_text = pos_list[counter]['text'].rstrip()
+        ner_text = ner_list[counter]['text'].rstrip()
+        sent_text = sent_list[counter]['text'].rstrip()
+
+        # ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+        #print(pos_text, '/n', ner_text, '/n', sent_text, counter)
+
+        if pos_text == ner_text and ner_text == sent_text:  # fffffffffffffffffffffffff
             # texts are the same, ie tweets are the same
 
             if counter % 1000 == 0:
                 print('Completed joining {0} tweets'.format(counter))
 
-            return {'created_at': pos_list[counter]['created_at'],
-                    'place', pos_list[counter]['place'],
-                    'text': curr_text,
-                    'pos': pos_list[counter]['pos'],
-                    'ner': ner_list[counter]['ner'],
-                    'sentiment': sent_list[counter]['sent']}
+            new_dictionary = {"created_at": pos_list[counter]['created_at'],
+                              "place": pos_list[counter]['place'],
+                              "text": pos_text,
+                              "pos": pos_list[counter]['pos'],
+                              "ner": ner_list[counter]['ner'],
+                              "sentiment": sent_list[counter]['sent']}
+
+            return new_dictionary
         else:
             # texts are not the same
-            return None
+            print('ERROR occured at tweet #{0}'.format(counter))
+            print(pos_text, '/n', ner_text, '/n', sent_text, '/n', counter)
+            new_dictionary = {"Error": counter}
+            return new_dictionary
 
     def dump_dictonary(DICTIONARY, FOUT):
         '''Funtion takes dictionary and appends it to file
@@ -87,7 +100,7 @@ def join_flair_2_json(POS_FIN, NER_FIN, SENT_FIN, FOUT):
         '''
 
         with open(FOUT, 'a') as fout:
-            fout.write(DICTIONARY)
+            fout.write(json.dumps(DICTIONARY))
             fout.write('\n')
             fout.close()
 
@@ -96,42 +109,39 @@ def join_flair_2_json(POS_FIN, NER_FIN, SENT_FIN, FOUT):
 
     print('Script is starting...')
 
-    pos_length = len(POS_FIN)
+    # open and store all 3 files in lists
+    with open(POS_FIN) as pos_fin:
+        pos_dict_list = [clean_line(LINE) for LINE in pos_fin]
+        pos_fin.close()
 
-    if pos_length == len(NER_FIN) and pos_length == len(SENT_FIN):
-        # documents are the same length
+    with open(NER_FIN) as ner_fin:
+        ner_dict_list = [clean_line(LINE) for LINE in ner_fin]
+        ner_fin.close()
 
-        print('json files are same length.')
+    with open(SENT_FIN) as sent_fin:
+        sent_dict_list = [clean_line(LINE) for LINE in sent_fin]
+        sent_fin.close()
 
-        # open and store all 3 files in lists
-        with open(POS_FIN) as pos_fin:
-            pos_dict_list = [clean_line(LINE) for LINE in pos_fin]
-            pos_fin.close()
+    print('Original json files are loaded.')
 
-        with open(NER_FIN) as ner_fin:
-            ner_dict_list = [clean_line(LINE) for LINE in ner_fin]
-            ner_fin.close()
+    # join all 3 dictionaries into 1 dictionary
+    joined_dictionaries = [join_lists(line_count, pos_dict_list, ner_dict_list, sent_dict_list)
+                           for line_count in range(len(pos_dict_list))]
 
-        with open(SENT_FIN) as sent_fin:
-            sent_dict_list = [clean_line(LINE) for LINE in sent_fin]
-            sent_fin.close()
+    print('json files are all joined. Dumping files')
 
-        print('Original json files are loaded.')
+    # dump dictionary list to json and csv
+    for dictionary in joined_dictionaries:
+        dump_dictonary(dictionary, FOUT + 'flair_joined_tweets.json')
 
-        # join all 3 dictionaries into 1 dictionary
-        joined_dictionaries = [join_lists(line_count, pos_dict_list, ner_dict_list, sent_dict_list)
-                               for line_count in range(pos_length)]
+    print('json file has been created and dumped to {0}'.format(
+        FOUT + 'flair_joined_tweets.json'))
 
-        print('json files are all joined. Dumping files')
+    joined_df = pd.DataFrame(joined_dictionaries)
+    joined_df.to_csv(FOUT + 'flair_joined_tweets.csv')
 
-        # dump dictionary list to json and csv
-        for dictionary in joined_dictionaries:
-            dump_dictonary(dictionary, FOUT + 'flair_joined_tweets.json')
-
-        joined_df = pd.DataFrame(joined_dictionaries)
-        joined_df.to_csv(FOUT + 'flair_joined_tweets.csv')
-
-        print('json file and csv file are dumped to {0}'.format(FOUT))
+    print('csv file has been created and was dumped to {0}'.format(
+        FOUT + 'flair_joined_tweets.csv'))
 
 
 join_flair_2_json(POS_FIN, NER_FIN, SENT_FIN, FOUT)
