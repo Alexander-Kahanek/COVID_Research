@@ -62,7 +62,7 @@ def get_pos_string(data, POS):
     return string
 
 
-def count_words(data):
+def count_nest_words(data):
     word_list = [words.lower()
                  for nest in data
                  if nest is not None
@@ -144,8 +144,8 @@ except:
     pass
 
 # getting wordcloud for all text
-pos_tweet = get_string(df['text'])
-create_wordcloud(pos_tweet, FOUT + 'text/all_wordcloud.png')
+all_tweet = get_string(df['text'])
+create_wordcloud(all_tweet, FOUT + 'text/all_wordcloud.png')
 
 print('All text wordcloud created.')
 ######
@@ -172,7 +172,7 @@ except:
 ner_string = get_nested_string(df['ner'])
 create_wordcloud(ner_string, FOUT + 'ner/ner_all_wordcloud.png')
 # getting count of named entity recognition
-ner_dict = count_words(df['ner'])
+ner_dict = count_nest_words(df['ner'])
 dump_words(ner_dict, FOUT + 'ner/ner_all_count.txt')
 
 print('All ner wordcloud and count list created.')
@@ -182,7 +182,7 @@ print('All ner wordcloud and count list created.')
 pos_ner_string = get_nested_string(df[df['sentiment'] == 'POSITIVE']['ner'])
 create_wordcloud(pos_ner_string, FOUT + 'ner/ner_positive_wordcloud.png')
 # getting count of named entity recognition
-pos_ner_dict = count_words(df[df['sentiment'] == 'POSITIVE']['ner'])
+pos_ner_dict = count_nest_words(df[df['sentiment'] == 'POSITIVE']['ner'])
 dump_words(pos_ner_dict, FOUT + 'ner/ner_positive_count.txt')
 
 ######
@@ -191,8 +191,8 @@ dump_words(pos_ner_dict, FOUT + 'ner/ner_positive_count.txt')
 neg_ner_string = get_nested_string(df[df['sentiment'] == 'NEGATIVE']['ner'])
 create_wordcloud(neg_ner_string, FOUT + 'ner/ner_negative_wordcloud.png')
 # getting count of named entity recognition
-neg_ner_dict = count_words(df[df['sentiment'] == 'NEGATIVE']['ner'])
-dump_words(pos_ner_dict, FOUT + 'ner/ner_negative_count.txt')
+neg_ner_dict = count_nest_words(df[df['sentiment'] == 'NEGATIVE']['ner'])
+dump_words(neg_ner_dict, FOUT + 'ner/ner_negative_count.txt')
 
 print('NER sentiment wordclouds and counts created.')
 ######
@@ -215,8 +215,8 @@ create_wordcloud(pos_verb_string, FOUT + 'pos/verb_positive_wordcloud.png')
 ######
 
 # getting wordclous for negative sentiment verbs only
-ned_verb_string = get_pos_string(df[df['sentiment'] == 'NEGATIVE']['pos'], 'V')
-create_wordcloud(ned_verb_string, FOUT + 'pos/verb_negative_wordcloud.png')
+neg_verb_string = get_pos_string(df[df['sentiment'] == 'NEGATIVE']['pos'], 'V')
+create_wordcloud(neg_verb_string, FOUT + 'pos/verb_negative_wordcloud.png')
 
 print('All verb wordclouds created.')
 ######
