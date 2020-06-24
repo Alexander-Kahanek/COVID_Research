@@ -6,11 +6,9 @@ from flair.models import TextClassifier
 
 ##########################
 # HYPERPARAMETERS ########
-FIN = "2_flair_scripts/filtered/tweets.csv"
+FIN = "2_flair_scripts/filtered/preprocessed_tweets.csv"
 FOUT = "2_flair_scripts/flair"
 ##########################
-
-count = 0  # global counting variable
 
 
 def flair_sentiment(FIN, FOUT):
@@ -22,20 +20,6 @@ def flair_sentiment(FIN, FOUT):
 
     FOUT: filepath to store new json into
     """
-
-    print("Reading in data.")
-
-    df = pd.read_csv(FIN)
-
-    count = 0  # global counting variable
-
-    # filter dataframe for only USA tweets
-    df = df[df['place_country_code'] == 'US']
-
-    # load classifier
-    classifier = TextClassifier.load('sentiment')
-
-    print('Model has been loaded from flair.')
 
     ##########################
     # DEFINING FUNCTIONS
@@ -56,7 +40,7 @@ def flair_sentiment(FIN, FOUT):
         # string of POSITIVE / NEGATIVE
         return sentence.to_dict()['labels'][0]['value']
 
-    def run_stack(date, place, text):
+    def run_stack(count, date, place, language, mentions, hashtags, text):
         '''Function to run flair stack
 
         Parameters
@@ -65,24 +49,42 @@ def flair_sentiment(FIN, FOUT):
 
         place : pass in place to be put in json
 
+        language : pass in language tag to be put in json
+
+        mentions : pass in list of mentions
+
+        hashtags : pass in list of hashtags
+
         text : pass in text to be put in json and ran through flair
 
         Returns
         -------
-        dictionarty object
+        dictionarty object, counter
         '''
 
-        # change to flair class, predict sentiment
-        sentence = Sentence(text)
-        sent = get_sentiment(sentence)
+        try:
+            # change to flair class, predict sentiment
+            sentence = Sentence(text)
+            sent = get_sentiment(sentence)
+        except:
+            text = None
+            sent = None
 
-        global count
-        count = count + 1
+        try:
+            count = count + 1
 
-        if count % 1000 == 0:
-            print("Completed {0} tweets.".format(count))
+            if count % 1000 == 0:
+                print("Completed {0} tweets.".format(count))
+        except:
+            pass
 
-        return {"created_at": date, "place": place, "text": text, "sent": sent}
+        return {"created_at": date,
+                "place": place,
+                "language": language,
+                "mentions": mentions,
+                "hashtags": hashtags,
+                "text": text,
+                "sent": sent}, count
 
     def dump_tweet(W_FILENAME, TWEET):
         '''Function to dump a single tweet
@@ -104,6 +106,22 @@ def flair_sentiment(FIN, FOUT):
     ##########################
     # RUNNING SCRIPT
 
+    print("Reading in data.")
+
+    df = pd.read_csv(FIN)
+
+    count = 0  # global count
+
+    # filter dataframe for only USA tweets
+    df = df[df['place_country_code'] == 'US'].fillna('None')
+
+    df = df[df['language'] == 'en']
+
+    # load classifier
+    classifier = TextClassifier.load('sentiment')
+
+    print('Model has been loaded from flair.')
+
     try:
         os.mkdir(FOUT)
     except:
@@ -111,11 +129,15 @@ def flair_sentiment(FIN, FOUT):
 
     print('Running Script.')
 
-    for row in (df[['created_at', 'place_full_name', 'text']].iterrows()):
-        tweet = run_stack(row[1]['created_at'],
-                          row[1]['place_full_name'],
-                          row[1]['text']
-                          )
+    for row in (df[['created_at', 'place_full_name', 'language', 'mentions', 'hashtags', 'clean_text']].iterrows()):
+        tweet, count = run_stack(count,
+                                 row[1]['created_at'],
+                                 row[1]['place_full_name'],
+                                 row[1]['language'],
+                                 row[1]['mentions'],
+                                 row[1]['hashtags'],
+                                 row[1]['clean_text']
+                                 )
         dump_tweet(FOUT + '/sentiment_tweets.json', tweet)
 
     print('Script has finished.')
