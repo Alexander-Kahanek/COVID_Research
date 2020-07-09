@@ -27,6 +27,7 @@ join_flair_2_json()
 These are the algorithms for the following scripts:
 
 * decompress_and_filter.py filters through compressed json files, and create a cleaner json file.
+  + ADD: total tweet count to complete.txt
   + loads in compressed json file -> decompresses file
   + loads in individual tweet and checks if it has the conditions needed to keep the tweet for further analysis
   + appends whole tweet to json file
