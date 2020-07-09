@@ -1,19 +1,18 @@
 import pandas as pd
 import json
 
-##############################
-# SETTING TO CHANGE ##########
-fin = 'filtered/cleaned.json' # file to get json data from
-fout = 'filtered/tweets.csv' # file to output csv to
-##############################
 
+def join_json_to_csv(FIN='filteredtweets/filtered.json', FOUT='filteredtweets/allfilteredtweets.csv'):
+    '''
+    takes json file from decompress_and_filter.py and
+    converts file into a csv for general analysis
 
+    Parameters
+    ----------
+    FIN : file location of the filtered json file
 
-def join_json_to_csv(FIN, FOUT):
-    # function used to take json file outputted from filter_script.py
-    # and convert the json file into a usable csv file
-    # FIN @ location of data json file from filter_script.py
-    # FOUT @ location to store csv file into
+    FOUT : file location and name for the filtered csv file
+    '''
 
     #################################
     # FUNCTIONS TO DEFINE
@@ -21,7 +20,7 @@ def join_json_to_csv(FIN, FOUT):
     cnt_tweet = 0  # global variable for counting the number of lines that have been processed
 
     def get_cnt():
-        ## function to keep track of the number of tweets processed
+        # function to keep track of the number of tweets processed
         # do not pass anything in
 
         global cnt_tweet
@@ -32,7 +31,7 @@ def join_json_to_csv(FIN, FOUT):
             print('Have completed {0} tweets'.format(cnt_tweet))
 
     def get_coordinates(LINE):
-        ## function used to get geo enabled coordinates
+        # function used to get geo enabled coordinates
         # LINE @ pass in line to be processed
 
         try:
@@ -42,7 +41,7 @@ def join_json_to_csv(FIN, FOUT):
             return None
 
     def get_place_coor(LINE):
-        ## function used to get place -> bounding_box data
+        # function used to get place -> bounding_box data
         # LINE @ pass in line to be processed
 
         try:
@@ -53,7 +52,7 @@ def join_json_to_csv(FIN, FOUT):
             return None
 
     def get_place_country(LINE):
-        ## function used to get place -> country data
+        # function used to get place -> country data
         # LINE @ pass in line to be processed
 
         try:
@@ -64,7 +63,7 @@ def join_json_to_csv(FIN, FOUT):
             return None
 
     def get_place_code(LINE):
-        ## function used to get place -> country code
+        # function used to get place -> country code
         # LINE @ pass in line to be processed
 
         try:
@@ -75,7 +74,7 @@ def join_json_to_csv(FIN, FOUT):
             return None
 
     def get_place_name(LINE):
-        ## function used to get place -> full_name
+        # function used to get place -> full_name
         # LINE @ pass in line to be processed
 
         try:
@@ -86,7 +85,7 @@ def join_json_to_csv(FIN, FOUT):
             return None
 
     def get_place_type(LINE):
-        ## function used to get place -> place_type
+        # function used to get place -> place_type
         # LINE @ pass in line to be processed
 
         try:
@@ -97,7 +96,7 @@ def join_json_to_csv(FIN, FOUT):
             return None
 
     def clean_line(LINE):
-        ## function used to take line from json file, and transfer it to a dictionary
+        # function used to take line from json file, and transfer it to a dictionary
         # LINE @ pass in line from json file to be processed
 
         LINE = json.loads(LINE.rstrip())  # strip newline from end
@@ -119,19 +118,24 @@ def join_json_to_csv(FIN, FOUT):
         get_cnt()  # print function for tracker
         return dict
 
-    #############################
-    # SCRIPT STARTS
-
-
-    print('Grabbing data from {0}'.format(FIN))
+    def main():
+        print('Grabbing data from {0}'.format(FIN))
     with open(FIN) as fin:
 
-        data = [clean_line(line) for line in fin] # make list of dictionaries
+        data = [clean_line(line) for line in fin]  # make list of dictionaries
 
-        df = pd.DataFrame(data) # dump list of dictionaries to df
+        df = pd.DataFrame(data)  # dump list of dictionaries to df
 
         print('Found {0} total tweets'.format(cnt_tweet))
         print('All tweets gathered, outputting to {0}'.format(FOUT))
-        df.to_csv(FOUT, index=False) # dump df to csv file
+        df.to_csv(FOUT, index=False)  # dump df to csv file
 
-join_json_to_csv(fin, fout)
+    main()
+
+######## EXAMPLE #############
+# SETTING TO CHANGE ##########
+# fin = 'filtered/cleaned.json'  # file to get json data from
+# fout = 'filtered/tweets.csv'  # file to output csv to
+##############################
+
+# join_json_to_csv(fin, fout)
