@@ -3,7 +3,7 @@
 This is where the dataset will be built, you can use `python3 build_dataset.py` 
 to run through all the scripts that take decompressed json files to filter the tweeets, 
 run them through flair and spaCy, and output them to a final csv file. More information 
-on each script can be found within the `scripts/` folder.
+on each script can be found within the `/scripts/` folder.
 
 
 # Dependencies
