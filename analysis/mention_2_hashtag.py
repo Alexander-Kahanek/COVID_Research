@@ -84,54 +84,58 @@ def get_mentions_hashtags(data, Nmentions, Nhashtags):
 
         return data.reset_index()
 
-    ###########################################
-    # SCRIPT STARTS HERE
+    def main(data, Nmentions, Nhashtags):
 
-    data = data.fillna('None')
+        ###########################################
+        # SCRIPT STARTS HERE
 
-    mentions = [fix_list(mentions)  # list of all mentions per row
-                for mentions in data['mentions']]
+        data = data.fillna('None')
 
-    hashtags = [fix_list(hashtags)  # list of all hashtags per row
-                for hashtags in data['hashtags']]
+        mentions = [fix_list(mentions)  # list of all mentions per row
+                    for mentions in data['mentions']]
 
-    # list of dictionary objects for each row
-    paired_rows = [join_lists(mentions[index], hashtags[index])
-                   for index in range(len(mentions))]
+        hashtags = [fix_list(hashtags)  # list of all hashtags per row
+                    for hashtags in data['hashtags']]
 
-    # seperate out dictionaries
-    all_dictionaries = [dictionary
-                        for row in paired_rows
-                        for dictionary in row]
+        # list of dictionary objects for each row
+        paired_rows = [join_lists(mentions[index], hashtags[index])
+                       for index in range(len(mentions))]
 
-    paired_df = pd.DataFrame(all_dictionaries)
+        # seperate out dictionaries
+        all_dictionaries = [dictionary
+                            for row in paired_rows
+                            for dictionary in row]
 
-    #############
-    # getting top N mention data
-    top_df = paired_df[paired_df['hashtag'] != 'None'].groupby(
-        ['mention']).count().reset_index()
+        paired_df = pd.DataFrame(all_dictionaries)
 
-    top_df = top_df[
-        top_df['mention'] != 'None'].sort_values('count', ascending=False)
+        #############
+        # getting top N mention data
+        top_df = paired_df[paired_df['hashtag'] != 'None'].groupby(
+            ['mention']).count().reset_index()
 
-    top_mentions = [mention
-                    for mention in top_df[0:Nmentions]['mention']]
+        top_df = top_df[
+            top_df['mention'] != 'None'].sort_values('count', ascending=False)
 
-    top_counts = [count
-                  for count in top_df[0:Nmentions]['count']]
-    ############
+        top_mentions = [mention
+                        for mention in top_df[0:Nmentions]['mention']]
 
-    # getting top mention -> hashtag data
-    mention_hashtag = paired_df.groupby(
-        ['mention', 'hashtag']).count().reset_index()
+        top_counts = [count
+                      for count in top_df[0:Nmentions]['count']]
+        ############
 
-    # seperating out dataframes into a list of individual DF objs
-    df_list = [find_dataframe(mention_hashtag, index, Nhashtags, top_mentions, top_counts)
-               for index in range(Nmentions)]
+        # getting top mention -> hashtag data
+        mention_hashtag = paired_df.groupby(
+            ['mention', 'hashtag']).count().reset_index()
 
-    merged_data = pd.concat(df_list).reset_index().drop(
-        columns=['level_0', 'index'])
+        # seperating out dataframes into a list of individual DF objs
+        df_list = [find_dataframe(mention_hashtag, index, Nhashtags, top_mentions, top_counts)
+                   for index in range(Nmentions)]
 
-    merged_data.columns = ['mention', 'hashtag', 'count', 'proportion']
+        merged_data = pd.concat(df_list).reset_index().drop(
+            columns=['level_0', 'index'])
 
-    return merged_data
+        merged_data.columns = ['mention', 'hashtag', 'count', 'proportion']
+
+        return merged_data
+
+    return main(data, Nmentions, Nhashtags)
