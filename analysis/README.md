@@ -2,7 +2,7 @@ final, stages, threshold are most recent notebooks
 
 # Python Analysis
 
-`COVID-analysis.ipynb` -- this file stores the main notebook for creating graphs.
+ALL ipynb files are under progress.
 
 `functions/` -- a folder containing python files that help reduce code clutter on `.ipynb`
 
