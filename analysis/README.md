@@ -1,4 +1,4 @@
-final, stages, threshold are most recent notebooks
+This folder is a mess of ideas, methods, and results. I am sorry in advanced. However, it is being refactored to flow better!
 
 # Python Analysis
 
